@@ -20,4 +20,5 @@ object Patterns {
   val PREDICATE_PARTS = List("compound", "cop", "case")
   val COP_RELATIONS = List("cop")
   val CASE_RELATIONS = List("case")
+  val EXTENDED_CASE_RELATIONS = List("case", "det", "numod")
 }
