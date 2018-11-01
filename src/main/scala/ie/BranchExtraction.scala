@@ -11,13 +11,17 @@ object BranchExtraction {
     AuxiliaryBranch(DependencyGraphs.getEdgeType(edge), words)
   }
 
-  def findAuxiliaryBranches(graph: SemanticGraph, predicate: IndexedWord, patterns: List[String]): List[AuxiliaryBranch] = {
-    val relatedWords = DependencyGraphs.findOutgoingEdges(graph, predicate, patterns)
+  def findAuxiliaryBranches(graph: SemanticGraph, word: IndexedWord, patterns: List[String]): List[AuxiliaryBranch] = {
+    val relatedWords = DependencyGraphs.findOutgoingEdges(graph, word, patterns)
 
     relatedWords.map(edge => auxiliaryInformationFromEdge(graph, edge))
   }
 
   def findAuxiliaryCases(graph: SemanticGraph, word: IndexedWord): List[AuxiliaryBranch] = {
     findAuxiliaryBranches(graph, word, Patterns.CASE_RELATIONS)
+  }
+
+  def findAuxiliaryNMods(graph: SemanticGraph, word: IndexedWord): List[AuxiliaryBranch] = {
+    findAuxiliaryBranches(graph, word, Patterns.NMOD_RELATION)
   }
 }

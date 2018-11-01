@@ -16,7 +16,7 @@ object PathLinks {
   }
 
   def getLinkingPaths(paths: List[InformationPath]): Map[Int, List[InformationPath]] = {
-    val wordPathMapping: mutable.HashMap[Int, ListBuffer[InformationPath]] = new mutable.HashMap[]()
+    val wordPathMapping = new mutable.HashMap[Int, ListBuffer[InformationPath]]()
 
     for (path <- paths) {
       val index = path.predicate.representative.index()
