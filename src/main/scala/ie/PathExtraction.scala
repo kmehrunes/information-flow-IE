@@ -32,9 +32,7 @@ object PathExtraction {
   }
 
   def candidateAuxiliaryBranch(predicate: Predicate): Option[AuxiliaryBranch] = {
-    val branches = predicate.branches
-
-    for (branch <- branches) {
+    for (branch <- predicate.branches) {
       val nouns = branch.words.filter(word => CoreNLPUtil.isNoun(word))
 
       if (nouns.nonEmpty) {
@@ -104,27 +102,11 @@ object PathExtraction {
 
         paths += InformationPath(subject, extendedPredicate, objWords, indirectObjectsWords, List.empty, List.empty)
       }
+      else {
+        paths += InformationPath(subject, predicate, List.empty, indirectObjectsWords, List.empty, List.empty)
+      }
     }
 
     paths.toList
-  }
-
-  def findSimplePaths(graph: SemanticGraph): List[InformationPath] = {
-    val buffer = new ListBuffer[InformationPath]
-
-    val predicateEdges = DependencyGraphs.findPredicateEdges(graph)
-
-    predicateEdges.foreach(edge => {
-      val edgeType = DependencyGraphs.getEdgeType(edge)
-
-      if (edgeType.contains("subj")) {
-        val predicateWord = edge.getGovernor
-        val subjWord = edge.getDependent
-
-        buffer.appendAll(findSubjectPaths(graph, subjWord, predicateWord))
-      }
-    })
-
-    buffer.toList
   }
 }
