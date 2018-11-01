@@ -62,7 +62,8 @@ object PathExtraction {
   }
 
   def findSubjectPaths(graph: SemanticGraph, subjectWord: IndexedWord,
-                       predicateWord: IndexedWord): List[InformationPath] = {
+                       predicateWord: IndexedWord): List[InformationPath] =
+  {
     val paths = new ListBuffer[InformationPath]
 
     val subject = DependencyGraphs.findCompoundsAndMods(graph, subjectWord)
@@ -108,5 +109,34 @@ object PathExtraction {
     }
 
     paths.toList
+  }
+
+  def findObjectPaths(graph: SemanticGraph, objectWord: IndexedWord,
+                      predicateWord: IndexedWord): List[InformationPath] =
+  {
+    val buffer = new ListBuffer[InformationPath]
+
+    val obj = DependencyGraphs.findCompoundsAndMods(graph, objectWord)
+    val predicate = predicateFromWord(graph, predicateWord)
+
+    val directSubjectsEdges = DependencyGraphs.findDirectSubjects(graph, predicateWord)
+
+    if (directSubjectsEdges.nonEmpty) {
+      for (subjectEdge <- directSubjectsEdges) {
+        val subjectWord = subjectEdge.getDependent
+        val subject = DependencyGraphs.findCompoundsAndMods(graph, subjectWord)
+
+        buffer += InformationPath(subject, predicate, obj, List.empty, List.empty, List.empty)
+      }
+    }
+    else {
+      buffer += InformationPath(List.empty, predicate, obj, List.empty, List.empty, List.empty)
+    }
+
+    buffer.toList
+  }
+
+  def findPathsFromApposAclEdges(graph: SemanticGraph, appsAclEdge: SemanticGraphEdge): List[InformationPath] = {
+    findSubjectPaths(graph, appsAclEdge.getGovernor, appsAclEdge.getDependent)
   }
 }

@@ -1,7 +1,6 @@
 package ie
 
 import edu.stanford.nlp.semgraph.SemanticGraph
-import ie.PathExtraction.findSubjectPaths
 
 import scala.collection.mutable.ListBuffer
 
@@ -17,9 +16,21 @@ object InformationExtraction {
 
       if (edgeType.contains("subj")) {
         val predicateWord = edge.getGovernor
-        val subjWord = edge.getDependent
+        val subjectWord = edge.getDependent
 
-        buffer.appendAll(findSubjectPaths(graph, subjWord, predicateWord))
+        buffer ++= PathExtraction.findSubjectPaths(graph, subjectWord, predicateWord)
+      }
+      else if (edgeType.contains("obj")) {
+        val predicateWord = edge.getGovernor
+        val objectWord = edge.getDependent
+
+        buffer ++= PathExtraction.findObjectPaths(graph, objectWord, predicateWord)
+      }
+      else if (edgeType.contains("appos") || edgeType.contains("acl")) {
+        val subjectWord = edge.getGovernor
+        val predicateWord = edge.getDependent
+
+        buffer ++= PathExtraction.findSubjectPaths(graph, subjectWord, predicateWord)
       }
     })
 
