@@ -7,6 +7,8 @@ import util.StringUtil
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 
+import scala.collection.JavaConverters._
+
 object DependencyGraphs {
   private def verifyEdgeRelationName(edge: SemanticGraphEdge, patterns: List[String]): Boolean = {
     StringUtil.containsAny(edge.getRelation.getShortName, patterns)
@@ -17,7 +19,7 @@ object DependencyGraphs {
   }
 
   private def isConnectingWord(graph: SemanticGraph, parent:IndexedWord, child: IndexedWord): Boolean = {
-    for (edge: SemanticGraphEdge <- graph.getAllEdges(parent, child)) {
+    for (edge: SemanticGraphEdge <- graph.getAllEdges(parent, child).asScala) {
       if (StringUtil.containsAny(edge.getRelation.getLongName, Patterns.INTERPATH_RELATIONS)) {
         return true
       }
@@ -28,7 +30,7 @@ object DependencyGraphs {
   def findOutgoingEdges(graph: SemanticGraph, start: IndexedWord, contains: List[String]): List[SemanticGraphEdge] = {
     val buffer = new ListBuffer[SemanticGraphEdge]
 
-    for (edge <- graph.outgoingEdgeList(start)) {
+    for (edge <- graph.outgoingEdgeList(start).asScala) {
       if (verifyEdgeRelationName(edge, contains)) {
         buffer += edge
       }
@@ -40,7 +42,7 @@ object DependencyGraphs {
   def findMatchingChildrenEdges(graph: SemanticGraph, parent: IndexedWord, patterns: List[String]): List[SemanticGraphEdge] = {
     val buffer = new ListBuffer[SemanticGraphEdge]
 
-    for (child <- graph.getChildList(parent)) {
+    for (child <- graph.getChildList(parent).asScala) {
       val edge = childWordToEdge(parent, child, graph)
       if (verifyEdgeRelationName(edge, patterns)) {
         buffer += edge
@@ -54,7 +56,7 @@ object DependencyGraphs {
     val buffer = new ListBuffer[IndexedWord]
     val wordParents = graph.outgoingEdgeList(start)
 
-    for (edge: SemanticGraphEdge <- wordParents) {
+    for (edge: SemanticGraphEdge <- wordParents.asScala) {
       if (verifyEdgeRelationName(edge, patterns)) {
         buffer += edge.getDependent
       }
@@ -67,7 +69,7 @@ object DependencyGraphs {
     val buffer = new ListBuffer[IndexedWord]
     val wordParents = graph.outgoingEdgeList(start)
 
-    for (edge: SemanticGraphEdge <- wordParents) {
+    for (edge: SemanticGraphEdge <- wordParents.asScala) {
       if (verifyEdgeRelationName(edge, patterns)) {
         val dependent = edge.getDependent
         val cases = findUp(graph, dependent, Patterns.EXTENDED_CASE_RELATIONS)
@@ -105,7 +107,7 @@ object DependencyGraphs {
     val buffer = new ListBuffer[SemanticGraphEdge]
     val found = new mutable.HashSet[Int]
 
-    for (edge: SemanticGraphEdge <- graph.edgeIterable()) {
+    for (edge: SemanticGraphEdge <- graph.edgeIterable().asScala) {
       val relation = edge.getRelation.getShortName
 
       if (StringUtil.containsAny(relation, Patterns.SUBJECT_OBJECT)) {
@@ -142,7 +144,7 @@ object DependencyGraphs {
     val buffer = new ListBuffer[IndexedWord]
     val children = graph.getChildList(start)
 
-    for (child <- children) {
+    for (child <- children.asScala) {
       if (isConnectingWord(graph, start, child)) {
         buffer += child
       }
