@@ -4,8 +4,10 @@ import edu.stanford.nlp.ling.IndexedWord
 import util.CoreNLPUtil
 
 case class InformationPath(var subj: List[IndexedWord], var predicate: Predicate, var obj: List[IndexedWord],
-                           var indirectObj: List[IndexedWord], var objectPaths: List[InformationPath],
-                           var auxiliaryPaths: List[InformationPath]) {
+                           var indirectObj: List[IndexedWord] = List.empty,
+                           var objectPaths: List[InformationPath] = List.empty,
+                           var auxiliaryPaths: List[InformationPath] = List.empty)
+{
 
   override def toString: String = {
     val builder = new StringBuilder

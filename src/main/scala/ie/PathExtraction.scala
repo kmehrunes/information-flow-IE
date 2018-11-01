@@ -49,7 +49,7 @@ object PathExtraction {
   {
     val extendedPredicated = predicate.copy(branches = predicate.branches ++ predicateBranches)
 
-    InformationPath(subj, extendedPredicated, obj, indirectObj, List(), List())
+    InformationPath(subj, extendedPredicated, obj, indirectObj)
   }
 
   def extendPredicateBranches(predicate: Predicate, branchesLists: List[AuxiliaryBranch]*): Predicate = {
@@ -85,7 +85,7 @@ object PathExtraction {
 
         val extendedPredicate = extendPredicateBranches(predicate, caseBranches, nmodBranches)
 
-        paths += InformationPath(subject, extendedPredicate, objWords, indirectObjectsWords, List.empty, List.empty)
+        paths += InformationPath(subject, extendedPredicate, objWords, indirectObjectsWords)
       }
     }
     else {
@@ -101,10 +101,10 @@ object PathExtraction {
 
         val extendedPredicate = predicate.copy(branches = filteredBranches ++ auxiliaryCaseBranches)
 
-        paths += InformationPath(subject, extendedPredicate, objWords, indirectObjectsWords, List.empty, List.empty)
+        paths += InformationPath(subject, extendedPredicate, objWords, indirectObjectsWords)
       }
       else {
-        paths += InformationPath(subject, predicate, List.empty, indirectObjectsWords, List.empty, List.empty)
+        paths += InformationPath(subject, predicate, List.empty, indirectObjectsWords)
       }
     }
 
@@ -126,11 +126,11 @@ object PathExtraction {
         val subjectWord = subjectEdge.getDependent
         val subject = DependencyGraphs.findCompoundsAndMods(graph, subjectWord)
 
-        buffer += InformationPath(subject, predicate, obj, List.empty, List.empty, List.empty)
+        buffer += InformationPath(subject, predicate, obj)
       }
     }
     else {
-      buffer += InformationPath(List.empty, predicate, obj, List.empty, List.empty, List.empty)
+      buffer += InformationPath(List.empty, predicate, obj)
     }
 
     buffer.toList
