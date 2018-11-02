@@ -13,6 +13,7 @@ object InformationExtraction {
 
     predicateEdges.foreach(edge => {
       val edgeType = DependencyGraphs.getEdgeType(edge)
+      println(edgeType)
 
       if (edgeType.contains("subj")) {
         val predicateWord = edge.getGovernor
@@ -33,9 +34,9 @@ object InformationExtraction {
         buffer ++= PathExtraction.findSubjectPaths(graph, subjectWord, predicateWord)
       }
       // TODO: check if this is needed
-//      else if (edgeType.contains("xcomp")) {
-//        buffer ++= PathExtraction.findPathsFromXcompEdge(graph, edge)
-//      }
+      else if (edgeType.contains("xcomp")) {
+        buffer ++= PathExtraction.findPathsFromXcompEdge(graph, edge)
+      }
     })
 
     buffer.toList
