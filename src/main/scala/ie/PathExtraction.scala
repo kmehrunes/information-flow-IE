@@ -139,4 +139,15 @@ object PathExtraction {
   def findPathsFromApposAclEdges(graph: SemanticGraph, appsAclEdge: SemanticGraphEdge): List[InformationPath] = {
     findSubjectPaths(graph, appsAclEdge.getGovernor, appsAclEdge.getDependent)
   }
+
+  def findPathsFromXcompEdge(graph: SemanticGraph, xcompEdge: SemanticGraphEdge): List[InformationPath] = {
+    if (xcompEdge.getGovernor.tag().contains("VB") && !xcompEdge.getDependent.tag().contains("VB")) {
+      val predicate = predicateFromWord(graph, xcompEdge.getGovernor)
+      val obj = DependencyGraphs.findCompounds(graph, xcompEdge.getDependent)
+
+      return List(InformationPath(List.empty, predicate, obj))
+    }
+
+    List.empty
+  }
 }

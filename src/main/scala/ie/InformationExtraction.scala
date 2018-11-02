@@ -32,6 +32,10 @@ object InformationExtraction {
 
         buffer ++= PathExtraction.findSubjectPaths(graph, subjectWord, predicateWord)
       }
+      // TODO: check if this is needed
+//      else if (edgeType.contains("xcomp")) {
+//        buffer ++= PathExtraction.findPathsFromXcompEdge(graph, edge)
+//      }
     })
 
     buffer.toList
