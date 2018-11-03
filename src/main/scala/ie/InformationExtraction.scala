@@ -13,7 +13,6 @@ object InformationExtraction {
 
     predicateEdges.foreach(edge => {
       val edgeType = DependencyGraphs.getEdgeType(edge)
-      println(edgeType)
 
       if (edgeType.contains("subj")) {
         val predicateWord = edge.getGovernor

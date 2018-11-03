@@ -20,7 +20,7 @@ object DependencyGraphs {
 
   private def isConnectingWord(graph: SemanticGraph, parent:IndexedWord, child: IndexedWord): Boolean = {
     for (edge: SemanticGraphEdge <- graph.getAllEdges(parent, child).asScala) {
-      if (StringUtil.containsAny(edge.getRelation.getLongName, Patterns.INTERPATH_RELATIONS)) {
+      if (StringUtil.containsAny(edge.getRelation.getShortName, Patterns.INTERPATH_RELATIONS)) {
         return true
       }
     }

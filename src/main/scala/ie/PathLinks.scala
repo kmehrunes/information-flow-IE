@@ -18,7 +18,7 @@ object PathLinks {
     }
   }
 
-  def getLinkingPaths(paths: Iterator[InformationPath]): Map[Int, List[InformationPath]] = {
+  private def linkWordsToPaths(paths: List[InformationPath]): Map[Int, List[InformationPath]] = {
     val wordPathMapping = new mutable.HashMap[Int, ListBuffer[InformationPath]]()
 
     for (path <- paths) {
@@ -47,20 +47,20 @@ object PathLinks {
     *                    words
     * @param graph       The dependency graph to operate on
     */
-  private def linkPathsByPredicate(graph: SemanticGraph, rootPath: InformationPath,
-                                   wordPathMap: Map[Integer, List[InformationPath]]): List[(InformationPath, InformationPath)] =
+  private def findPredicateLinks(graph: SemanticGraph, rootPath: InformationPath,
+                                   wordPathMap: Map[Int, List[InformationPath]]): List[InformationPath] =
   {
     val predicateRepresentative: IndexedWord = rootPath.predicate.representative
     val predicateLinks: List[IndexedWord] = DependencyGraphs.findConnectingRelations(graph, predicateRepresentative)
 
-    val buffer = new ListBuffer[(InformationPath, InformationPath)]
+    val buffer = new ListBuffer[InformationPath]
 
     for (linkingWord <- predicateLinks) {
       val linkedPaths = wordPathMap.getOrElse(linkingWord.index, List.empty)
 
       for (path <- linkedPaths) {
         if (path != rootPath) {
-          buffer += Tuple2(rootPath, path)
+          buffer += path
         }
       }
     }
@@ -77,22 +77,37 @@ object PathLinks {
     *                    words
     * @param graph       The dependency graph to operate on
     */
-  private def linkPathsByObject(graph: SemanticGraph, rootPath: InformationPath,
-                                wordPathMap: Map[Integer, List[InformationPath]]): List[(InformationPath, InformationPath)] =
+  private def findObjectLinks(graph: SemanticGraph, rootPath: InformationPath,
+                                wordPathMap: Map[Int, List[InformationPath]]): List[InformationPath] =
   {
     val objectLinks = rootPath.obj.flatMap(word => DependencyGraphs.findConnectingRelations(graph, word))
-    val buffer = new ListBuffer[(InformationPath, InformationPath)]
+    val buffer = new ListBuffer[InformationPath]
 
     for (linkingWord <- objectLinks) {
       val linkedPaths = wordPathMap.getOrElse(linkingWord.index, List.empty)
 
       for (path <- linkedPaths) {
         if (path != rootPath) {
-          buffer += Tuple2(rootPath, path)
+          buffer += path
         }
       }
     }
 
     buffer.toList
+  }
+
+  private def linkPaths(graph: SemanticGraph, rootPath: InformationPath,
+                        wordPathMap: Map[Int, List[InformationPath]]): InformationPath =
+  {
+    val predicateLinks = findPredicateLinks(graph, rootPath, wordPathMap)
+    val objectLinks = findObjectLinks(graph, rootPath, wordPathMap)
+
+    rootPath.copy(predicateLinks = predicateLinks, objectLinks = objectLinks)
+  }
+
+  def linkPaths(graph: SemanticGraph, paths: List[InformationPath]): List[InformationPath] = {
+    val pathsMap = linkWordsToPaths(paths)
+
+    paths.map(path => linkPaths(graph, path, pathsMap))
   }
 }
