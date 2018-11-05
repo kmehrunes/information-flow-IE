@@ -16,18 +16,22 @@ case class InformationPath(var subj: List[IndexedWord], var predicate: Predicate
     builder.append(CoreNLPUtil.indexWordsToString(this.subj))
     builder.append(", PREDICATE: ")
     builder.append(predicate.toString)
-    builder.append(", OBJECT: ")
-    builder.append(CoreNLPUtil.indexWordsToString(this.obj))
+
+    if (obj.nonEmpty) {
+      builder.append(", OBJECT: ")
+      builder.append(CoreNLPUtil.indexWordsToString(this.obj))
+    }
+    builder.append(")")
 
     if (predicateLinks.nonEmpty) {
-      builder.append(", PREDICATE LINKS: [\n\t")
-      builder.append(predicateLinks.map(p => p.toString).mkString(",\n\t "))
-      builder.append("\n]")
+      builder.append("--- PREDICATE LINK ---> [")
+      builder.append(predicateLinks.map(p => p.toString).mkString(", "))
+      builder.append("]")
     }
 
     if (objectLinks.nonEmpty) {
-      builder.append(", OBJECT LINKS: [\n")
-      builder.append(objectLinks.map(p => p.toString).mkString(",\n "))
+      builder.append(", OBJECT LINKS: [\n\t")
+      builder.append(objectLinks.map(p => p.toString).mkString(",\n\t "))
       builder.append("\n]")
     }
 

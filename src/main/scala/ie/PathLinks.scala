@@ -18,7 +18,7 @@ object PathLinks {
     }
   }
 
-  private def linkWordsToPaths(paths: List[InformationPath]): Map[Int, List[InformationPath]] = {
+  private[ie] def linkWordsToPaths(paths: List[InformationPath]): Map[Int, List[InformationPath]] = {
     val wordPathMapping = new mutable.HashMap[Int, ListBuffer[InformationPath]]()
 
     for (path <- paths) {
@@ -47,7 +47,7 @@ object PathLinks {
     *                    words
     * @param graph       The dependency graph to operate on
     */
-  private def findPredicateLinks(graph: SemanticGraph, rootPath: InformationPath,
+  private[ie] def findPredicateLinks(graph: SemanticGraph, rootPath: InformationPath,
                                    wordPathMap: Map[Int, List[InformationPath]]): List[InformationPath] =
   {
     val predicateRepresentative: IndexedWord = rootPath.predicate.representative
@@ -77,7 +77,7 @@ object PathLinks {
     *                    words
     * @param graph       The dependency graph to operate on
     */
-  private def findObjectLinks(graph: SemanticGraph, rootPath: InformationPath,
+  private[ie] def findObjectLinks(graph: SemanticGraph, rootPath: InformationPath,
                                 wordPathMap: Map[Int, List[InformationPath]]): List[InformationPath] =
   {
     val objectLinks = rootPath.obj.flatMap(word => DependencyGraphs.findConnectingRelations(graph, word))
@@ -94,20 +94,5 @@ object PathLinks {
     }
 
     buffer.toList
-  }
-
-  private def linkPaths(graph: SemanticGraph, rootPath: InformationPath,
-                        wordPathMap: Map[Int, List[InformationPath]]): InformationPath =
-  {
-    val predicateLinks = findPredicateLinks(graph, rootPath, wordPathMap)
-    val objectLinks = findObjectLinks(graph, rootPath, wordPathMap)
-
-    rootPath.copy(predicateLinks = predicateLinks, objectLinks = objectLinks)
-  }
-
-  def linkPaths(graph: SemanticGraph, paths: List[InformationPath]): List[InformationPath] = {
-    val pathsMap = linkWordsToPaths(paths)
-
-    paths.map(path => linkPaths(graph, path, pathsMap))
   }
 }
