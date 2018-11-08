@@ -77,17 +77,6 @@ object PathExtraction {
     None
   }
 
-  @deprecated
-  def createPathFromSubjectFlow(subj: List[IndexedWord], predicate: Predicate,
-                                obj: List[IndexedWord], indirectObj: List[IndexedWord],
-                                predicateBranches: List[AuxiliaryBranch]): InformationPath =
-  {
-    val extendedPredicated = predicate.copy(branches = predicate.branches ++ predicateBranches)
-
-    InformationPath(subj, extendedPredicated, obj, indirectObj)
-  }
-
-
   /**
     * Creates a new predicate which contains the old
     * predicate's branches and the ones to be added.
