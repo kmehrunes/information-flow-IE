@@ -3,6 +3,10 @@ package ie
 import edu.stanford.nlp.ling.IndexedWord
 import edu.stanford.nlp.semgraph.{SemanticGraph, SemanticGraphEdge}
 
+/**
+  * An object which contains functions related to extraction
+  * of auxiliary branches.
+  */
 object BranchExtraction {
   def auxiliaryInformationFromEdge(graph: SemanticGraph, edge: SemanticGraphEdge): AuxiliaryBranch = {
     val dependent = edge.getDependent
