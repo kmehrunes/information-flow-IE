@@ -9,33 +9,38 @@ case class InformationPath(var subj: List[IndexedWord], var predicate: Predicate
                            var objectLinks: List[InformationPath] = List.empty)
 {
 
-  override def toString: String = {
+  override def toString: String = toStringInd(this)
+
+  private def toStringInd(path: InformationPath, ind: Int = 0, prefix: String = ""): String = {
     val builder = new StringBuilder
 
-    builder.append("(SUBJECT: ")
-    builder.append(CoreNLPUtil.indexWordsToString(this.subj))
-    builder.append(", PREDICATE: ")
-    builder.append(predicate.toString)
+    (0 until ind).foreach(_ => builder.append('\t'))
+    builder.append(prefix)
 
-    if (obj.nonEmpty) {
-      builder.append(", OBJECT: ")
-      builder.append(CoreNLPUtil.indexWordsToString(this.obj))
+    builder.append("(subj: ")
+    builder.append(CoreNLPUtil.indexWordsToString(path.subj))
+    builder.append(", pred: ")
+    builder.append(path.predicate.toString)
+
+    if (path.obj.nonEmpty) {
+      builder.append(", obj: ")
+      builder.append(CoreNLPUtil.indexWordsToString(path.obj))
     }
     builder.append(")")
 
-    if (predicateLinks.nonEmpty) {
-      builder.append("--- PREDICATE LINK ---> [")
-      builder.append(predicateLinks.map(p => p.toString).mkString(", "))
-      builder.append("]")
+    if (path.predicateLinks.nonEmpty) {
+      path.predicateLinks.foreach(p => {
+        builder.append('\n')
+        builder.append(toStringInd(p, ind + 1, "predicate link: "))
+      })
     }
 
-    if (objectLinks.nonEmpty) {
-      builder.append(", OBJECT LINKS: [\n\t")
-      builder.append(objectLinks.map(p => p.toString).mkString(",\n\t "))
-      builder.append("\n]")
+    if (path.objectLinks.nonEmpty) {
+      path.objectLinks.foreach(p => {
+        builder.append('\n')
+        builder.append(toStringInd(p, ind + 1, "object link: "))
+      })
     }
-
-    builder.append(")")
 
     builder.toString
   }
