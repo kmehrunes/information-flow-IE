@@ -1,9 +1,11 @@
 package ie
 
+import edu.stanford.nlp.simple.Document
 import edu.stanford.nlp.semgraph.{SemanticGraph, SemanticGraphFactory}
 import edu.stanford.nlp.simple.Sentence
 
 import scala.collection.mutable.ListBuffer
+import scala.collection.JavaConverters._
 
 object InformationExtraction {
 
@@ -76,11 +78,16 @@ object InformationExtraction {
   /**
     * Runs the pipeline of creating a graph, finding information
     * paths, linking them, and filtering out incomplete ones.
-    * @param sentence
+    * @param text
     * @return
     */
-  def runPipeline(sentence: String): List[InformationPath] = {
-    val graph = new Sentence(sentence).dependencyGraph(SemanticGraphFactory.Mode.ENHANCED_PLUS_PLUS)
+  def runPipeline(text: String): List[ExtractionResult] = {
+    val sentences = new Document(text).sentences().asScala
+    sentences.map(sent => ExtractionResult(sent.text(), runPipelineSentence(sent))).toList
+  }
+
+  private def runPipelineSentence(sentence: Sentence): List[InformationPath] = {
+    val graph = sentence.dependencyGraph(SemanticGraphFactory.Mode.ENHANCED_PLUS_PLUS)
     val paths = InformationExtraction.findSimplePaths(graph)
     val linked = InformationExtraction.linkPaths(graph, paths)
 
