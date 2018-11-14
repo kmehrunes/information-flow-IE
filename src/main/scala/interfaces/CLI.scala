@@ -1,35 +1,47 @@
 package interfaces
 
+import ie.{ExtractionResult, InformationExtraction}
 import org.rogach.scallop._
+
+import scala.io.Source
 
 class Conf(arguments: Seq[String]) extends ScallopConf(arguments) {
   val input: ScallopOption[String] = opt[String]()
   val format: ScallopOption[String] = opt[String](default = Some("plain"),
     validate = List("plain", "json").contains)
   val file: ScallopOption[String] = opt[String]()
-  val mode: ScallopOption[String] = opt[String](default = Some("sentences"),
-    validate = List("sentences", "paragraphs", "block").contains)
 
   requireOne(file, input)
-  dependsOnAll(mode, List(file))
   verify()
 }
 
 object CLI {
 
-  def fromFile(path: String, mode: String, format: String): Unit = {
-    println("Feature not supported")
+  def printExtractionResult(result: ExtractionResult): Unit = {
+    println("Sentence: " + result.sentence)
+    result.paths.foreach(path => {
+      println(path)
+      println()
+    })
+  }
+
+  def fromFile(path: String, format: String): Unit = {
+    val lines = Source.fromFile(path).getLines().filter(line => !line.trim.isEmpty)
+    val results = lines.map(paragraph => InformationExtraction.runPipeline(paragraph))
+
+    if (format.equals("plain")) {
+      results.foreach(result => result.foreach(printExtractionResult))
+    }
+    else {
+      println("feature not yet supported")
+    }
   }
 
   def fromInput(input: String, format: String): Unit = {
     val result = ie.InformationExtraction.runPipeline(input)
 
     if (format.equals("plain")) {
-      result.foreach(path => {
-        println("Information flow:")
-        println(path)
-        println()
-      })
+      result.foreach(printExtractionResult)
     }
     else {
       println("feature not yet supported")
@@ -41,6 +53,9 @@ object CLI {
 
     if (conf.input.isDefined) {
       fromInput(conf.input.getOrElse(""), conf.format.getOrElse(""))
+    }
+    else if (conf.file.isDefined) {
+      fromFile(conf.file.getOrElse(""), conf.format.getOrElse(""))
     }
   }
 }
