@@ -25,7 +25,10 @@ class StatefulPathLinker(graph: SemanticGraph, wordPathMap: Map[Int, List[Inform
       objectLinks = objectLinks.map(linkPath => linkPaths(linkPath))
     }
 
-    copyAndUpdate(rootPath, predicateLinks, objectLinks)
+    val result = copyAndUpdate(rootPath, predicateLinks, objectLinks)
+    memo.put(rootPath, result)
+
+    result
   }
 
   private def copyAndUpdate(path: InformationPath, predicateLinks: List[InformationPath],

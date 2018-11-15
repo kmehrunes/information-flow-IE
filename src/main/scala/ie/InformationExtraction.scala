@@ -34,7 +34,13 @@ object InformationExtraction {
 
         buffer ++= PathExtraction.findObjectPaths(graph, objectWord, predicateWord)
       }
-      else if (edgeType.contains("appos") || edgeType.contains("acl")) {
+      else if (edgeType.contains("appos")) {
+        val subjectWord = edge.getGovernor
+        val predicateWord = edge.getDependent
+
+        buffer ++= PathExtraction.findSubjectPaths(graph, subjectWord, predicateWord)
+      }
+      else if (edgeType.contains("acl") && !edgeType.contains("relcl")) {
         val subjectWord = edge.getGovernor
         val predicateWord = edge.getDependent
 
@@ -42,6 +48,7 @@ object InformationExtraction {
       }
       // TODO: check if this is needed
       else if (edgeType.contains("xcomp")) {
+        println("xcomp here")
         buffer ++= PathExtraction.findPathsFromXcompEdge(graph, edge)
       }
     })
