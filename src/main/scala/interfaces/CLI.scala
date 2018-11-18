@@ -27,24 +27,24 @@ object CLI {
 
   def fromFile(path: String, format: String): Unit = {
     val lines = Source.fromFile(path).getLines().filter(line => !line.trim.isEmpty)
-    val results = lines.map(paragraph => InformationExtraction.runPipeline(paragraph))
+    val results = lines.flatMap(paragraph => InformationExtraction.runPipeline(paragraph)).toList
 
     if (format.equals("plain")) {
-      results.foreach(result => result.foreach(printExtractionResult))
+      println(Formatters.formatPlain(results))
     }
     else {
-      println("feature not yet supported")
+      println(Formatters.formatJson(results, prettyPrint = true))
     }
   }
 
   def fromInput(input: String, format: String): Unit = {
-    val result = ie.InformationExtraction.runPipeline(input)
+    val results = ie.InformationExtraction.runPipeline(input)
 
     if (format.equals("plain")) {
-      result.foreach(printExtractionResult)
+      println(Formatters.formatPlain(results))
     }
     else {
-      println("feature not yet supported")
+      println(Formatters.formatJson(results, prettyPrint = true))
     }
   }
 
