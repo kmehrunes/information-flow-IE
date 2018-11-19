@@ -2,7 +2,7 @@ package interfaces
 
 import java.io.PrintWriter
 
-import ie.{ExtractionResult, InformationExtraction}
+import ie.InformationExtraction
 import org.rogach.scallop._
 
 import scala.io.Source
