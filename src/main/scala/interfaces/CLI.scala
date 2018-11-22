@@ -13,8 +13,9 @@ class Conf(arguments: Seq[String]) extends ScallopConf(arguments) {
     validate = List("plain", "json").contains)
   val file: ScallopOption[String] = opt[String]()
   val output: ScallopOption[String] = opt[String](default = Some("stdout"))
+  val server: ScallopOption[Boolean] = opt[Boolean]()
 
-  requireOne(file, input)
+  requireOne(file, input, server)
 
   verify()
 }
@@ -63,6 +64,9 @@ object CLI {
     }
     else if (conf.file.isDefined) {
       fromFile(conf.file.getOrElse(""), conf.format.getOrElse(""), conf.output.getOrElse(""))
+    }
+    else if (conf.server.isDefined) {
+      Server.start()
     }
   }
 }
