@@ -89,6 +89,11 @@ object InformationExtraction {
     * @return
     */
   def runPipeline(text: String): List[ExtractionResult] = {
+    val trimmed = text.trim()
+
+    if (trimmed.isEmpty)
+      return List.empty
+
     val sentences = new Document(text).sentences().asScala
     sentences.map(sent => ExtractionResult(sent.text(), runPipelineSentence(sent))).toList
   }
