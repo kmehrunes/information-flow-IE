@@ -5,7 +5,7 @@ import java.io.PrintWriter
 import ie.InformationExtraction
 import org.rogach.scallop._
 
-import scala.io.Source
+import scala.io.{Source, StdIn}
 
 class Conf(arguments: Seq[String]) extends ScallopConf(arguments) {
   val input: ScallopOption[String] = opt[String]()
@@ -14,8 +14,9 @@ class Conf(arguments: Seq[String]) extends ScallopConf(arguments) {
   val file: ScallopOption[String] = opt[String]()
   val output: ScallopOption[String] = opt[String](default = Some("stdout"))
   val server: ScallopOption[Boolean] = opt[Boolean]()
+  val interactive: ScallopOption[Boolean] = opt[Boolean]()
 
-  requireOne(file, input, server)
+  requireOne(file, input, server, interactive)
 
   verify()
 }
@@ -56,6 +57,27 @@ object CLI {
     writeToOutput(formattedResults, output)
   }
 
+  def interactive(format: String): Unit = {
+    println("Running in interactive mode")
+    println("Type 'exit' to terminate")
+
+    var condition = true
+    while (condition) {
+      val input = StdIn.readLine("Enter your text: ")
+
+      if (input.toLowerCase().equals("exit")) {
+        condition = false
+      }
+      else {
+        val results = ie.InformationExtraction.runPipeline(input)
+        if (format.equals("plain"))
+          println(Formatters.formatPlain(results))
+        else
+          println(Formatters.formatJson(results, prettyPrint = true))
+      }
+    }
+  }
+
   def main(args: Array[String]) {
     val conf = new Conf(args)
 
@@ -65,8 +87,11 @@ object CLI {
     else if (conf.file.isDefined) {
       fromFile(conf.file.getOrElse(""), conf.format.getOrElse(""), conf.output.getOrElse(""))
     }
-    else if (conf.server.isDefined) {
+    else if (conf.server.getOrElse(false)) {
       Server.start()
+    }
+    else if (conf.interactive.getOrElse(false)) {
+      interactive(conf.format.getOrElse(""))
     }
   }
 }
