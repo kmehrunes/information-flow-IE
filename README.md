@@ -8,7 +8,17 @@ The goal was to see how well a simple pattern-based approach can compete against
 `//TODO`
 
 ## Running The Tool
-`//TODO`
+You can run it using `sbt "run <args>"`, but keep in mind that you may need to give SBT some extra memory so the command might look like `sbt -mem <memory> "run <args>`.
+
+The tool could be used in one of four ways depending on the mode specified in the arguments:
+* input (`--input <text>`): takes the input from the CLI directly
+* interactive (`--interactive`): prompts input until user exits
+* file (`--file <path to file>`): processes a text file where each line is treated as an individual document
+* server (`--server`): runs a server on port 3210 which exposes a single REST endpoint `/ie`, it takes a raw text as a request body and returns the result as JSON
+
+There are also other options, such as:
+* format (`--format <plain | json>`, default `plain`): specified the format of the output (doesn't have any effect when running as a server)
+* output (`--output <stdout | path to file>`, default `stdout`): specifies whether the output should be sent to standard output or to a file (doesn't have any effect when running in server or interactive modes)
 
 ## Examples
 `//TODO`
