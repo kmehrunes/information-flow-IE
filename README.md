@@ -5,7 +5,50 @@ This is project was an experiment I worked on a while ago. It attemps to extract
 The goal was to see how well a simple pattern-based approach can compete against other more complicated models. Unlike some previous attemps in using patterns, this one doesn't have long patterns for detecting cases. Every *"pattern"* is actually one step at traversing the graph and no more. The premise is that if the dependency graph was accurate enough then we can use it to segment the text into pieces of information. For example, if two words have the relation `subj` between them, then you don't need to train a model to detect that this is a relation between a subject and a predicate and work your way from there.
 
 ## Approach
-`//TODO`
+
+```
+pipeline(sentence)
+{
+  graph <- create_dependency_graph(sentence)
+  paths <- find_paths(graph)
+  linked_paths <- link_paths(paths)
+  filtered_paths <- remove_incomplete_paths(linked_paths)
+  
+  return filtered_paths
+}
+```
+
+```
+find_path_from_edge(edge)
+{
+  (governor, dependent) = get_edge_words(edge)
+  type = get_edge_type(edge)
+  
+  if is_subject(type)
+  {
+    return find_path_from_subject(governot, dependent)
+  }
+  else if is_object(type)
+  {
+    return find_path_from_object(governot, dependent)
+  }
+  else if is_appositional(type)
+  {
+    return find_path_from_apoos(governot, dependent)
+  }
+  else if is_clausal_modifier(type) and not is_not_relative_clausal(type)
+  {
+    return find_path_from_acl(governot, dependent)
+  }
+}
+
+find_paths(graph)
+{
+  edges <- get_all_edges(graph)
+  seed_edges <- filter_edges_by_relation_pattern(edges, SEED_EDGES_PATTERNS) // SEED_EDGES_PATTERNS = ['subj', 'dobj', 'acl', 'appos']
+  paths <- map(seed_edges, find_path_from_edge)
+}
+```
 
 ## Running The Tool
 You can run it using `sbt "run <args>"`, but keep in mind that you may need to give SBT some extra memory so the command might look like `sbt -mem <memory> "run <args>`.
