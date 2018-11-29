@@ -1,6 +1,12 @@
 # Dependency Graph Information Extraction (DGIE), for lack of a better name
 This is project was an experiment I worked on a while ago. It attemps to extract bits of information in text using only the relation of a dependency graph (and PoS tags in very rare cases). The project was rewritten in Scala, there could be few mistakes here and there while it was being rewritten.
 
+To have a clear understanding and to find examples for the types of relations between words used here and in the implementation refer to:
+* [Universal Dependency Relations](http://universaldependencies.org/u/dep/index.html)
+* [Stanford typed dependencies manual](https://nlp.stanford.edu/software/dependencies_manual.pdf)
+
+This project uses [Stanford CoreNLP Dependency Parser](https://nlp.stanford.edu/software/stanford-dependencies.shtml) to generate the dependency graph. You can check CoreNLP [here](https://stanfordnlp.github.io/CoreNLP/).
+
 ## Motivation
 The goal was to see how well a simple pattern-based approach can compete against other more complicated models. Unlike some previous attemps in using patterns, this one doesn't have long patterns for detecting cases. Every *"pattern"* is actually one step at traversing the graph and no more. The premise is that if the dependency graph was accurate enough then we can use it to segment the text into pieces of information. For example, if two words have the relation `subj` between them, then you don't need to train a model to detect that this is a relation between a subject and a predicate and work your way from there.
 
