@@ -83,12 +83,14 @@ There are also other options, such as:
 
 ## Examples
 A simple single path.
+
 **Led Zepplin was formed in 1986**
 ```
 (subj: Led Zepplin, pred: formed[List(auxpass: was, in: 1986)])
 ```
 
 A more complicated sentence which contains multiple paths and links. In face, this particular sentence was the reason why this whole project started.
+
 **MAS CEO confirms SAR ops and says airline is working to verify speculations that the MH370 may have landed in Nanning**
 ```
 (subj: MAS CEO, pred: confirms, obj: SAR ops)
