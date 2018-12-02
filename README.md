@@ -7,6 +7,11 @@ To have a clear understanding and to find examples for the types of relations be
 
 This project uses [Stanford CoreNLP Dependency Parser](https://nlp.stanford.edu/software/stanford-dependencies.shtml) to generate the dependency graph. You can check CoreNLP [here](https://stanfordnlp.github.io/CoreNLP/).
 
+## Other Information Extraction Projects
+* [Ollie](https://github.com/knowitall/ollie): Follows a similar approach to that followed here. There's currently no existing comparison between the two.
+* [Stanford CoreNLP OpenIE](https://stanfordnlp.github.io/CoreNLP/openie.html).
+* [Open IE 5.0](https://github.com/dair-iitd/OpenIE-standalone): Probably the state-of-the-art tool.
+
 ## Motivation
 The goal was to see how well a simple pattern-based approach can compete against other more complicated models. Unlike some previous attemps in using patterns, this one doesn't have long patterns for detecting cases. Every *"pattern"* is actually one step at traversing the graph and no more. The premise is that if the dependency graph was accurate enough then we can use it to segment the text into pieces of information. For example, if two words have the relation `subj` between them, then you don't need to train a model to detect that this is a relation between a subject and a predicate and work your way from there.
 
